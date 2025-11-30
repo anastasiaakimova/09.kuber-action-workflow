@@ -1,0 +1,31 @@
+name: KinD Cluster CI
+
+on:
+  push:
+    branches:
+      - kind-ci
+
+jobs:
+  kind:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: 'latest'
+
+      - name: Install KinD
+        run: |
+          curl -Lo kind https://kind.sigs.k8s.io/dl/latest/kind-linux-amd64
+          chmod +x kind
+          sudo mv kind /usr/local/bin/
+          kind version
+
+      - name: Create cluster
+        run: |
+          kind create cluster
+          kubectl get nodes
